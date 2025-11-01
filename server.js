@@ -50,7 +50,8 @@ app.use((req, res, next) => {
 
 // Upload endpoint
 app.post('/upload', upload.array('frames'), (req, res) => {
-    if (!req.files || req.files.length === 0) {
+    // Ensure files is an array to prevent type confusion
+    if (!req.files || !Array.isArray(req.files) || req.files.length === 0) {
         return res.status(400).json({ error: 'No files uploaded' });
     }
     
@@ -128,7 +129,19 @@ app.post('/generate', express.json(), async (req, res) => {
 // Download video endpoint
 app.get('/download/:filename', (req, res) => {
     const filename = req.params.filename;
+    
+    // Validate filename to prevent path traversal
+    if (!filename || !/^output_\d+\.mp4$/.test(filename)) {
+        return res.status(400).json({ error: 'Invalid filename' });
+    }
+    
     const filePath = path.join(__dirname, 'temp', filename);
+    
+    // Ensure the resolved path is within the temp directory
+    const tempDir = path.join(__dirname, 'temp');
+    if (!filePath.startsWith(tempDir)) {
+        return res.status(400).json({ error: 'Invalid file path' });
+    }
     
     if (!fs.existsSync(filePath)) {
         return res.status(404).json({ error: 'Video not found' });

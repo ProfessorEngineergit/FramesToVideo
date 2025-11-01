@@ -58,22 +58,38 @@ frameInput.addEventListener('change', async (e) => {
 
 // Update file list display
 function updateFileList() {
+    // Clear existing content
+    fileList.innerHTML = '';
+    
     if (uploadedFiles.length === 0) {
-        fileList.innerHTML = '<p style="color: #999; text-align: center;">No frames uploaded yet</p>';
+        const emptyMsg = document.createElement('p');
+        emptyMsg.style.color = '#999';
+        emptyMsg.style.textAlign = 'center';
+        emptyMsg.textContent = 'No frames uploaded yet';
+        fileList.appendChild(emptyMsg);
         generateBtn.disabled = true;
         return;
     }
     
-    fileList.innerHTML = `
-        <p style="margin-bottom: 10px; color: #555;">
-            <strong>${uploadedFiles.length}</strong> frame(s) uploaded
-        </p>
-        ${uploadedFiles.map((file, index) => `
-            <div class="file-item">
-                ${index + 1}. ${file.name} (${formatFileSize(file.size)})
-            </div>
-        `).join('')}
-    `;
+    // Create header paragraph
+    const headerP = document.createElement('p');
+    headerP.style.marginBottom = '10px';
+    headerP.style.color = '#555';
+    
+    const strong = document.createElement('strong');
+    strong.textContent = uploadedFiles.length.toString();
+    headerP.appendChild(strong);
+    headerP.appendChild(document.createTextNode(' frame(s) uploaded'));
+    
+    fileList.appendChild(headerP);
+    
+    // Create file items using DOM methods to prevent XSS
+    uploadedFiles.forEach((file, index) => {
+        const fileItem = document.createElement('div');
+        fileItem.className = 'file-item';
+        fileItem.textContent = `${index + 1}. ${file.name} (${formatFileSize(file.size)})`;
+        fileList.appendChild(fileItem);
+    });
 }
 
 // Format file size
