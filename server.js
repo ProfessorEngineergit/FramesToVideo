@@ -79,8 +79,10 @@ app.post('/generate', express.json(), async (req, res) => {
     }
 
     // Create a pattern file for FFmpeg
-    const outputFile = path.join(tempDir, `output_${Date.now()}.mp4`);
-    const patternFile = path.join(tempDir, `pattern_${Date.now()}.txt`);
+    const timestamp = Date.now();
+    const random = Math.floor(Math.random() * 10000);
+    const outputFile = path.join(tempDir, `output_${timestamp}_${random}.mp4`);
+    const patternFile = path.join(tempDir, `pattern_${timestamp}_${random}.txt`);
     
     // Create concat demuxer file
     const fileList = frames.map(frame => `file '${path.join(uploadsDir, frame)}'`).join('\n');
@@ -121,8 +123,8 @@ app.post('/generate', express.json(), async (req, res) => {
 app.get('/download/:filename', (req, res) => {
     const filename = req.params.filename;
     
-    // Validate filename to prevent path traversal
-    if (!filename || !/^output_\d+\.mp4$/.test(filename)) {
+    // Validate filename to prevent path traversal and null bytes
+    if (!filename || !/^output_\d+_\d+\.mp4$/.test(filename) || filename.includes('\0')) {
         return res.status(400).json({ error: 'Invalid filename' });
     }
     
