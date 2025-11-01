@@ -20,11 +20,11 @@ const storage = multer.diskStorage({
         cb(null, uploadDir);
     },
     filename: (req, file, cb) => {
-        // Use timestamp and index to maintain order
+        // Use timestamp and random value to avoid collisions
         const timestamp = Date.now();
-        const index = req.fileIndex || 0;
+        const random = Math.floor(Math.random() * 10000);
         const ext = path.extname(file.originalname);
-        cb(null, `frame_${timestamp}_${String(index).padStart(4, '0')}${ext}`);
+        cb(null, `frame_${timestamp}_${String(random).padStart(4, '0')}${ext}`);
     }
 });
 
@@ -37,15 +37,6 @@ const upload = multer({
         }
         cb(null, true);
     }
-});
-
-// Track file indices for ordering
-let fileCounter = 0;
-app.use((req, res, next) => {
-    if (req.path === '/upload') {
-        req.fileIndex = fileCounter++;
-    }
-    next();
 });
 
 // Upload endpoint
@@ -150,13 +141,18 @@ app.get('/download/:filename', (req, res) => {
     res.download(filePath, 'output.mp4', (err) => {
         if (err) {
             console.error('Download error:', err);
-        }
-        // Clean up temp file after download
-        setTimeout(() => {
+            // Only clean up if download failed
             if (fs.existsSync(filePath)) {
                 fs.unlinkSync(filePath);
             }
-        }, 5000);
+        } else {
+            // Clean up after successful download with longer delay for slow connections
+            setTimeout(() => {
+                if (fs.existsSync(filePath)) {
+                    fs.unlinkSync(filePath);
+                }
+            }, 30000); // 30 seconds to allow for slow downloads
+        }
     });
 });
 
@@ -171,7 +167,6 @@ app.post('/clear', (req, res) => {
         });
     }
     
-    fileCounter = 0;
     res.json({ success: true, message: 'All uploads cleared' });
 });
 

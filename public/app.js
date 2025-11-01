@@ -58,8 +58,8 @@ frameInput.addEventListener('change', async (e) => {
 
 // Update file list display
 function updateFileList() {
-    // Clear existing content
-    fileList.innerHTML = '';
+    // Clear existing content efficiently
+    fileList.replaceChildren();
     
     if (uploadedFiles.length === 0) {
         const emptyMsg = document.createElement('p');
