@@ -1,0 +1,18 @@
+{
+  "name": "framestovideo",
+  "version": "1.0.0",
+  "description": "A simple Web-App to upload individual frames, pick a video framerate and download the final video",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.1.0",
+    "fluent-ffmpeg": "^2.1.3",
+    "multer": "^2.0.2"
+  }
+}

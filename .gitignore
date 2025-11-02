@@ -1,0 +1,7 @@
+node_modules/
+uploads/
+temp/
+npm-debug.log
+.DS_Store
+*.mp4
+*.avi
