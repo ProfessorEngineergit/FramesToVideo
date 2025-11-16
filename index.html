@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frames to Video</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 Frames to Video</h1>
+        <p class="subtitle">Upload individual frames, set framerate, and create your video!</p>
+        
+        <div class="card">
+            <h2>Step 1: Upload Frames</h2>
+            <div class="upload-section">
+                <input type="file" id="frameInput" accept="image/*" multiple>
+                <label for="frameInput" class="upload-btn">
+                    📁 Choose Images
+                </label>
+                <button id="clearBtn" class="secondary-btn">🗑️ Clear All</button>
+            </div>
+            <div id="fileList" class="file-list"></div>
+        </div>
+
+        <div class="card">
+            <h2>Step 2: Set Framerate</h2>
+            <div class="framerate-section">
+                <label for="framerateInput">Frames per second (FPS):</label>
+                <input type="number" id="framerateInput" min="1" max="60" value="24">
+                <span class="framerate-value">24 FPS</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Step 3: Generate Video</h2>
+            <button id="generateBtn" class="primary-btn" disabled>
+                🎥 Generate Video
+            </button>
+        </div>
+
+        <div id="statusMessage" class="status-message"></div>
+        
+        <div id="downloadSection" class="download-section" style="display: none;">
+            <h3>✅ Video Ready!</h3>
+            <button id="downloadBtn" class="download-btn">
+                ⬇️ Download Video
+            </button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
